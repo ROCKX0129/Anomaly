@@ -10,11 +10,6 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity = 2f;
     private CharacterController controller;
 
-    [Header("Footsteps")]
-    public AudioClip Step_Sound;  // Drag your "Step_Sound" here
-    public float stepInterval = 0.5f;  // Time between steps
-    private AudioSource audioSource;
-    private float nextStepTime = -0.2f;
 
     [Header("Camera")]
     public Transform cameraTransform;
@@ -38,7 +33,6 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        audioSource = GetComponent<AudioSource>();  // Auto-grabs AudioSource
         cam = cameraTransform.GetComponent<Camera>();
         normalFOV = cam.fieldOfView;
 
@@ -61,15 +55,14 @@ public class PlayerMovement : MonoBehaviour
     {
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+        bool isMoving = (x != 0 || z != 0);
+
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * speed * Time.deltaTime);
 
         // Footstep logic: Play sound when moving
-        if ((x != 0 || z != 0) && Time.time >= nextStepTime && Step_Sound != null)
-        {
-            audioSource.PlayOneShot(Step_Sound);
-            nextStepTime = Time.time + stepInterval;
-        }
+       
+        SimpleSoundManager.Instance?.SetFootstepsPlaying(isMoving);
     }
 
     void MouseLook()
