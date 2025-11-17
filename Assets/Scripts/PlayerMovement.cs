@@ -10,7 +10,6 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity = 2f;
     private CharacterController controller;
 
-
     [Header("Camera")]
     public Transform cameraTransform;
     public float zoomFOV = 30f;
@@ -45,6 +44,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Stop the player and camera movement if the game is paused
+        if (PauseManager.instance != null && PauseManager.instance.isPaused)
+            return;
+
         MovePlayer();
         MouseLook();
         HandleZoom();
@@ -60,8 +63,6 @@ public class PlayerMovement : MonoBehaviour
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * speed * Time.deltaTime);
 
-        // Footstep logic: Play sound when moving
-       
         SimpleSoundManager.Instance?.SetFootstepsPlaying(isMoving);
     }
 
@@ -79,13 +80,9 @@ public class PlayerMovement : MonoBehaviour
     void HandleZoom()
     {
         if (Input.GetMouseButton(1))
-        {
             isZooming = true;
-        }
         else
-        {
             isZooming = false;
-        }
 
         float targetFOV = isZooming ? zoomFOV : normalFOV;
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, Time.deltaTime * zoomSpeed);
