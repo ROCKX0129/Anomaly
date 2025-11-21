@@ -1,31 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI; // IMPORTANT: Need this namespace for the Text component
 using System; // Needed for TimeSpan
+using TMPro;
 
-/// <summary>
-/// A simple script to manage a count-up timer and display it on a UI Text component.
-/// </summary>
+
 public class TimerDisplay : MonoBehaviour
 {
-    // Drag your UI Text component here in the Inspector
-    [Tooltip("Assign the Text UI component that will display the time.")]
-    public Text timerText;
 
-    // Stores the total time elapsed since the timer started
+    public TextMeshProUGUI timerText;
+
     private float elapsedTime;
 
-    // Flag to control if the timer is actively running
     private bool isRunning = false;
 
     void Start()
     {
-        // Check if the Text component is assigned before starting
-        if (timerText == null)
-        {
-            Debug.LogError("Timer Text component is not assigned! Please assign it in the Inspector.");
-            enabled = false; // Disable the script if the setup is incomplete
-            return;
-        }
+        elapsedTime = 600.0f;
 
         // Start the timer when the game begins
         StartTimer();
@@ -35,11 +25,19 @@ public class TimerDisplay : MonoBehaviour
     {
         if (isRunning)
         {
-            // Add the time passed since the last frame
-            elapsedTime += Time.deltaTime;
+            elapsedTime -= Time.deltaTime;
 
             // Update the UI display
             UpdateTimerDisplay(elapsedTime);
+
+            timerText.text = elapsedTime.ToString(format:"0");
+
+            if (elapsedTime <= 0 && isRunning)
+            {
+                isRunning  = false;
+            }
+
+
         }
     }
 
