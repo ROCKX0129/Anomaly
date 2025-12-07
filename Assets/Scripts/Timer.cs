@@ -1,85 +1,126 @@
 using UnityEngine;
-using UnityEngine.UI; // IMPORTANT: Need this namespace for the Text component
-using System; // Needed for TimeSpan
 using TMPro;
-
+using System;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Collections;
 
 public class TimerDisplay : MonoBehaviour
 {
-
     public TextMeshProUGUI timerText;
+    public TextMeshProUGUI gameOverText;
+    public Button retryButton;
+    public Button quitButton;
 
     private float elapsedTime;
-
     private bool isRunning = false;
+
+    public float fadeDuration = 1.5f;
 
     void Start()
     {
-        elapsedTime = 600.0f;
+        elapsedTime = 10.0f;
 
-        // Start the timer when the game begins
+        gameOverText.gameObject.SetActive(false);
+        retryButton.gameObject.SetActive(false);
+        quitButton.gameObject.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         StartTimer();
     }
 
     void Update()
     {
-        if (isRunning)
+        if (!isRunning) return;
+
+        elapsedTime -= Time.deltaTime;
+
+        if (elapsedTime <= 0)
         {
-            elapsedTime -= Time.deltaTime;
-
-            // Update the UI display
-            UpdateTimerDisplay(elapsedTime);
-
-            timerText.text = elapsedTime.ToString(format:"0");
-
-            if (elapsedTime <= 0 && isRunning)
-            {
-                isRunning  = false;
-            }
-
-
+            elapsedTime = 0;
+            EndGame();
+            return;
         }
+
+        UpdateTimerDisplay(elapsedTime);
     }
 
-    /// <summary>
-    /// Starts or resumes the timer.
-    /// </summary>
+    private void EndGame()
+    {
+        isRunning = false;
+        UpdateTimerDisplay(0);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        Time.timeScale = 0f;
+
+        StartCoroutine(FadeGameOver());
+    }
+
+    private IEnumerator FadeGameOver()
+    {
+        gameOverText.gameObject.SetActive(true);
+        retryButton.gameObject.SetActive(true);
+        quitButton.gameObject.SetActive(true);
+
+        CanvasGroup textGroup = gameOverText.gameObject.AddComponent<CanvasGroup>();
+        CanvasGroup retryGroup = retryButton.gameObject.AddComponent<CanvasGroup>();
+        CanvasGroup quitGroup = quitButton.gameObject.AddComponent<CanvasGroup>();
+
+        textGroup.alpha = 0;
+        retryGroup.alpha = 0;
+        quitGroup.alpha = 0;
+
+        float t = 0;
+
+        while (t < fadeDuration)
+        {
+            t += Time.unscaledDeltaTime;
+
+            float alpha = t / fadeDuration;
+
+            textGroup.alpha = alpha;
+            retryGroup.alpha = alpha;
+            quitGroup.alpha = alpha;
+
+            yield return null;
+        }
+
+        textGroup.alpha = 1;
+        retryGroup.alpha = 1;
+        quitGroup.alpha = 1;
+    }
+
+    public void Retry()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
     public void StartTimer()
     {
         isRunning = true;
     }
 
-    /// <summary>
-    /// Stops the timer.
-    /// </summary>
-    public void StopTimer()
-    {
-        isRunning = false;
-    }
-
-    /// <summary>
-    /// Resets the timer to zero.
-    /// </summary>
-    public void ResetTimer()
-    {
-        elapsedTime = 0f;
-        UpdateTimerDisplay(0f); // Immediately update the display to show 00:00.00
-    }
-
-    /// <summary>
-    /// Formats the time in seconds into a readable MM:SS.ms string and updates the Text component.
-    /// </summary>
-    /// <param name="timeInSeconds">The total elapsed time in seconds.</param>
     private void UpdateTimerDisplay(float timeInSeconds)
     {
-        // Use TimeSpan to easily format time into minutes, seconds, and milliseconds
         TimeSpan time = TimeSpan.FromSeconds(timeInSeconds);
 
-        // Format: MM:SS.ms (e.g., 05:30.15)
         string timeString = string.Format("{0:00}:{1:00}.{2:00}",
             time.Minutes,
             time.Seconds,
-            time.Milliseconds / 10); // Divide by 10 to get two digits for milliseconds
+            time.Milliseconds / 10);
 
         timerText.text = timeString;
     }

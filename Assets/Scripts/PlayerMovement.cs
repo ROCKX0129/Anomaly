@@ -44,7 +44,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Stop the player and camera movement if the game is paused
+        if (Time.timeScale == 0)
+            return;
+
         if (PauseManager.instance != null && PauseManager.instance.isPaused)
             return;
 
