@@ -110,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
                     Ray ray = cam.ViewportPointToRay(viewportPoint);
                     if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactableLayer))
                     {
+                        Event.TimeAnomolyFound();
                         Destroy(hit.collider.gameObject);
                     }
                 }

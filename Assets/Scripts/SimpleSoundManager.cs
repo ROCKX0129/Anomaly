@@ -10,8 +10,16 @@ public class SimpleSoundManager : MonoBehaviour
     [Header("Settings")]
     [Range(0f, 1f)] public float volume = 0.8f;
 
-    private AudioSource audioSource;
+    [Header("BGM Audio")]
+    public AudioClip BGM;
 
+    private AudioSource audioSource;
+    private AudioSource BackgroundMusicSource;
+
+    void Start()
+    {
+        BackgroundMusicSource.Play();
+    }
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -26,6 +34,12 @@ public class SimpleSoundManager : MonoBehaviour
         audioSource.loop = true;        // REPEATS FOREVER
         audioSource.volume = volume;
         audioSource.playOnAwake = false;
+
+        BackgroundMusicSource = gameObject.AddComponent<AudioSource>();
+        BackgroundMusicSource.clip = BGM;
+        BackgroundMusicSource.loop = true;
+        BackgroundMusicSource.volume = volume;
+        BackgroundMusicSource.playOnAwake = false;
     }
 
     /// <summary>

@@ -17,9 +17,24 @@ public class TimerDisplay : MonoBehaviour
 
     public float fadeDuration = 1.5f;
 
+    private void OnEnable()
+    {
+        Event.AnomolyFound += TimeAdded;
+    }
+
+    private void OnDisable()
+    {
+
+    }
+
+    void TimeAdded()
+    {
+        elapsedTime += 2.0f;
+    }
+
     void Start()
     {
-        elapsedTime = 10.0f;
+        elapsedTime = 20.0f;
 
         gameOverText.gameObject.SetActive(false);
         retryButton.gameObject.SetActive(false);
