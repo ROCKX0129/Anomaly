@@ -25,8 +25,20 @@ public class AchimentPanelContorller : MonoBehaviour
         Event.Achim_TheGray += ShowTheGrayAchiment;
         Event.Achim_Phonograph += ShowPhonographAchiment;
         Event.Achim_Slipper += ShowSlipperAchiment;
+        Event.Achim_Shower += ShowShowerAchiment;
+        Event.Achim_Mushroom += ShowMushroomAchiment;
     }
 
+    void ShowMushroomAchiment()
+    {
+        AchimentTitle.text = "I don't think you should took that";
+        StartCoroutine(PopThePanel());
+    }
+    void ShowShowerAchiment()
+    {
+        AchimentTitle.text = "Publicarea still,";
+        StartCoroutine(PopThePanel());
+    }
     void ShowTheGrayAchiment()
     {
         AchimentTitle.text = "The everything started";

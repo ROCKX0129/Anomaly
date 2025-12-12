@@ -34,6 +34,8 @@ public static class Event{
     private static int TheGraycounter = 0;
     private static int Phonographcounter = 0;
     private static int Slippercounter = 0;
+    private static int Showercounter = 0;
+    private static int Mushroomcounter = 0;
 
 
     public static event Action AnomolyFound;
@@ -49,8 +51,27 @@ public static class Event{
     public static event Action Achim_TheGray;
     public static event Action Achim_Phonograph;
     public static event Action Achim_Slipper;
+    public static event Action Achim_Shower;
+    public static event Action Achim_Mushroom;
     public static void TimeAnomolyFound(){
         AnomolyFound?.Invoke();
+    }
+
+    public static void AchimShowerTriger(){
+        if (Showercounter < 1)
+        {
+            Achim_Shower?.Invoke();
+            Showercounter++;
+            return;
+        }
+    }
+    public static void AchimMushroomTriger(){
+        if (Mushroomcounter < 1)
+        {
+            Achim_Mushroom?.Invoke();
+            Mushroomcounter++;
+            return;
+        }
     }
 
     public static void AchimToiletTriger(){
